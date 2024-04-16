@@ -12,4 +12,5 @@ receivers:
     provider: "acs"
     to: 
       - <PHONE_NUMBER>
+    text: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} @ {{ .Labels.instance }}'
     
