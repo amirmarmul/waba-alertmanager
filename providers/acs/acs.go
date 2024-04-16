@@ -2,8 +2,8 @@ package acs
 
 import (
 	"bytes"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,19 +11,19 @@ import (
 )
 
 type Config struct {
-	URL			string	`yaml:"url"`
-	ApiToken	string	`yaml:"api_token"`
-	Sender		SenderComponent		`yaml:"sender"`
-	Template	TemplateComponent	`yaml:"template"`
+	URL      string            `yaml:"url"`
+	ApiToken string            `yaml:"api_token"`
+	Sender   SenderComponent   `yaml:"sender"`
+	Template TemplateComponent `yaml:"template"`
 }
 
 type SenderComponent struct {
-	ID	string 	`yaml:"id"`
+	ID string `yaml:"id"`
 }
 
 type TemplateComponent struct {
-	Name	string 	`yaml:"name"`
-	Lang	string 	`yaml:"lang"`
+	Name string `yaml:"name"`
+	Lang string `yaml:"lang"`
 }
 
 const RequestTimeout = time.Second * 20
@@ -41,6 +41,7 @@ func NewAcs(config Config) *Acs {
 
 func (c *Acs) Send(message notify.Message) error {
 	for _, recipient := range message.To {
+		fmt.Println(recipient)
 		payload := map[string]interface{}{
 			"content": []interface{}{
 				map[string]interface{}{
@@ -74,7 +75,7 @@ func (c *Acs) Send(message notify.Message) error {
 		if err != nil {
 			return err
 		}
-		
+
 		request, err := http.NewRequest("POST", c.URL, bytes.NewBuffer(data))
 		if err != nil {
 			return err
@@ -83,7 +84,7 @@ func (c *Acs) Send(message notify.Message) error {
 		request.Header.Set("Api-Token", c.ApiToken)
 		request.Header.Set("Content-Type", "application/json")
 		request.Header.Set("User-Agent", "AlertManager")
-		
+
 		httpClient := &http.Client{}
 		httpClient.Timeout = RequestTimeout
 
@@ -96,8 +97,6 @@ func (c *Acs) Send(message notify.Message) error {
 		if response.StatusCode >= http.StatusBadRequest {
 			return fmt.Errorf("Failed sending message. statusCode: %d", response.StatusCode)
 		}
-
-		return nil
 	}
 
 	return nil
