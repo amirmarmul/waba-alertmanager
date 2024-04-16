@@ -41,7 +41,6 @@ func NewAcs(config Config) *Acs {
 
 func (c *Acs) Send(message notify.Message) error {
 	for _, recipient := range message.To {
-		fmt.Println(recipient)
 		payload := map[string]interface{}{
 			"content": []interface{}{
 				map[string]interface{}{
